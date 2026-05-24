@@ -8,9 +8,9 @@ const {
   createEvent,
   updateEvent,
   deleteEvent,
+  toggleFeatured,
 } = require('../controllers/eventController');
 
-// Multer — memory mein store karo
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
@@ -18,12 +18,11 @@ router.get('/', getEvents);
 router.post('/', auth, createEvent);
 router.put('/:id', auth, updateEvent);
 router.delete('/:id', auth, deleteEvent);
+router.patch('/:id/featured', auth, toggleFeatured);
 
-// Photo upload route
 router.post('/:id/photos', auth, upload.array('photos', 10), async (req, res) => {
   try {
     const urls = [];
-
     for (const file of req.files) {
       const result = await new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
@@ -34,18 +33,14 @@ router.post('/:id/photos', auth, upload.array('photos', 10), async (req, res) =>
           }
         ).end(file.buffer);
       });
-
       urls.push(result.secure_url);
     }
-
-    // Event ke photos array mein add karo
     const Event = require('../models/Event');
     const event = await Event.findByIdAndUpdate(
       req.params.id,
       { $push: { photos: { $each: urls } } },
       { new: true }
     );
-
     res.json(event);
   } catch (err) {
     console.error(err);

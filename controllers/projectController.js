@@ -36,3 +36,16 @@ exports.deleteProject = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+//featured toggle
+
+exports.toggleFeatured = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    project.featured = !project.featured;
+    await project.save();
+    res.json(project);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};

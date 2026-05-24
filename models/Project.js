@@ -6,6 +6,8 @@ const projectSchema = new mongoose.Schema({
   techStack: [{ type: String }],
   projectLink: { type: String },
   githubLink: { type: String },
+  color: { type: String, default: '#7c3aed' },
+  featured: { type: Boolean, default: false }, 
 }, { timestamps: true });
 
 module.exports = mongoose.model('Project', projectSchema);

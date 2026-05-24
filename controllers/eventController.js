@@ -40,3 +40,15 @@ exports.deleteEvent = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// featured toggle add
+exports.toggleFeatured = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    event.featured = !event.featured;
+    await event.save();
+    res.json(event);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};

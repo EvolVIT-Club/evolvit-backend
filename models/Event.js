@@ -12,6 +12,7 @@ const eventSchema = new mongoose.Schema({
   category: { type: String },
   color: { type: String, default: '#7c3aed' },
   emoji: { type: String, default: 'EVT' },
+  featured: { type: Boolean, default: false }, 
 }, { timestamps: true });
 
 module.exports = mongoose.model('Event', eventSchema);
