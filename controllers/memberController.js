@@ -1,4 +1,5 @@
 const Member = require('../models/Member');
+const cloudinary = require('../config/cloudinary');
 
 exports.getMembers = async (req, res) => {
   try {
@@ -12,12 +13,18 @@ exports.getMembers = async (req, res) => {
 exports.createMember = async (req, res) => {
   try {
     const member = new Member(req.body);
-    if(req.file){
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'evolvit/members'
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: 'evolvit/members' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        ).end(req.file.buffer);
       });
       member.image = result.secure_url;
-    } 
+    }
     await member.save();
     res.status(201).json(member);
   } catch (err) {
