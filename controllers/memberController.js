@@ -12,6 +12,12 @@ exports.getMembers = async (req, res) => {
 exports.createMember = async (req, res) => {
   try {
     const member = new Member(req.body);
+    if(req.file){
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'evolvit/members'
+      });
+      member.image = result.secure_url;
+    } 
     await member.save();
     res.status(201).json(member);
   } catch (err) {
