@@ -9,8 +9,8 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 router.get('/', getMembers);
-router.post('/', auth, createMember);
-router.put('/:id', auth, updateMember);
+router.post('/', auth, upload.single('photo'), createMember);
+router.put('/:id', auth, upload.single('photo'), updateMember);
 router.delete('/:id', auth, deleteMember);
 
 // Photo upload
